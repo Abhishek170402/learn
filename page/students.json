@@ -1,0 +1,44 @@
+[
+    {
+        "id": "1",
+        "name": "Abhishek R",
+        "class": "bca ",
+        "mark": "50"
+    },
+    {
+        "id": "2",
+        "name": "Akash",
+        "class": "bca",
+        "mark": "50"
+    },
+    {
+        "id": "3",
+        "name": "anu",
+        "class": "bca",
+        "mark": "40"
+    },
+    {
+        "id": "4",
+        "name": "anand",
+        "class": "bca",
+        "mark": "40"
+    },
+    {
+        "id": "5",
+        "name": "arun",
+        "class": "bca",
+        "mark": "40"
+    },
+    {
+        "id": "6",
+        "name": "amal",
+        "class": "bca",
+        "mark": "35"
+    },
+    {
+        "id": "7",
+        "name": "ameen ",
+        "class": "bca",
+        "mark": "35"
+    }
+]

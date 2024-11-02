@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .table {
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        h1 {
+            color: #343a40;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="text-center">Student Management System</h1>
+    
+        {% if error %}
+        <div class="alert alert-danger" role="alert">
+            {{ error }}
+        </div>
+        {% endif %}
+    
+        <form method="POST" action="{% url 'test' %}" class="mb-4">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <label for="student_id">Student ID:</label>
+                    <input type="text" id="student_id" name="student_id" class="form-control" required>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="student_class">Class:</label>
+                    <input type="text" id="student_class" name="student_class" class="form-control" required>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="mark">Mark:</label>
+                    <input type="number" id="mark" name="mark" class="form-control" required>
+                </div>
+
+                        <!-- validation for phn number -->
+
+                {% comment %} <div class="form-group col-md-3">
+                    <label for="phone">Phone Number:</label>
+                    <input type="tel" id="phone" name="phone" class="form-control"
+                           pattern='^\+?1?\d{9,15}$'
+                           placeholder='Enter phone number' required>
+                    <small class='form-text text-muted'>Format: +123456789012 or 1234567890</small>
+                </div> {% endcomment %}
+            </div>
+            <button type='submit' class='btn btn-primary btn-block'>Add Student</button>
+        </form>
+    
+        <!-- Student List Table -->
+        <h2>Student List</h2>
+        <table class='table table-striped'>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Class</th>
+                    <th>Mark</th>
+                    {% comment %} <th>Phone Number</th> <!-- Add Phone Number Column --> {% endcomment %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>{{ student.id }}</td>
+                    <td>{{ student.name }}</td>
+                    <td>{{ student.class }}</td>
+                    <td>{{ student.mark }}</td>
+                    {% comment %} <td>{{ student.phone }}</td> <!-- Display Phone Number --> {% endcomment %}
+                </tr>
+                {% empty %}
+                <tr><td colspan='5' class='text-center'>No students found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    
+    </div>
+    
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
