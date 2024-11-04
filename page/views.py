@@ -140,14 +140,14 @@ def test(request):
         name = request.POST['name']
         student_class = request.POST['student_class']
         mark = request.POST['mark']
-        # 'phone': request.POST['phone']
+        phone = request.POST['phone']
         
         # Validate phone number
-        # if not re.match(r'^\+?1?\d{9,15}$', phone):
-        #     return render(request, 'test.html', {
-        #         'students': students,
-        #         'error': 'Invalid phone number format. Please enter a valid phone number.'
-        #     })
+        if not re.match(r'^\+?1?\d{9,15}$', phone):
+            return render(request, 'test.html', {
+                'students': students,
+                'error': 'Invalid phone number format. Please enter a valid phone number.'
+            })
 
 
 
@@ -155,8 +155,8 @@ def test(request):
             'id': student_id,
             'name': name,
             'class': student_class,
-            'mark': mark
-            # 'phone': phone
+            'mark': mark,
+            'phone': phone
         }
 
         # Save to JSON
@@ -164,7 +164,7 @@ def test(request):
         save_students(students)
 
         # Save to database
-        details.objects.create(student_id=student_id, name=name, student_class=student_class, mark=mark)
+        details.objects.create(student_id=student_id, name=name, student_class=student_class, mark=mark, phone=phone)
 
         return redirect('index')  # Redirect to index after saving
 

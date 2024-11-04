@@ -40,5 +40,18 @@
         "name": "ameen ",
         "class": "bca",
         "mark": "35"
+    },
+    {
+        "id": "8",
+        "name": "ashik",
+        "class": "bca",
+        "mark": "50"
+    },
+    {
+        "id": "9",
+        "name": "sanjay",
+        "class": "bca",
+        "mark": "40",
+        "phone": "9876543210"
     }
 ]
