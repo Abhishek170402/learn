@@ -169,3 +169,51 @@ def test(request):
         return redirect('index')  # Redirect to index after saving
 
     return render(request, 'test.html', {'students': students})
+
+def edit_student(request, student_id):
+    """Edit an existing student's details."""
+    students = load_students()
+    student_to_edit = next((student for student in students if student['id'] == student_id), None)
+
+    if request.method == 'POST':
+        # Retrieve updated data from the form
+        name = request.POST.get('name')
+        student_class = request.POST.get('student_class')
+        mark = request.POST.get('mark')
+        phone = request.POST.get('phone')
+
+        # Validate phone number format
+        if not re.match(r'^\+?1?\d{9,15}$', phone):
+            return render(request, 'edit.html', {
+                'student': student_to_edit,
+                'error': 'Invalid phone number format.'
+            })
+
+        # Update the student's details if found
+        if student_to_edit:
+            student_to_edit.update({
+                'name': name,
+                'class': student_class,
+                'mark': mark,
+                'phone': phone
+            })
+            save_students(students)  # Save updated students list to JSON
+            
+            # Update details in the database (if you have a model for it)
+            try:
+                details_obj = details.objects.get(student_id=student_id)
+                details_obj.name = name
+                details_obj.student_class = student_class
+                details_obj.mark = mark
+                details_obj.phone = phone
+                details_obj.save()
+            except details.DoesNotExist:
+                return render(request, 'edit.html', {
+                    'student': student_to_edit,
+                    'error': 'Student not found in database.'
+                })
+
+            return redirect('index')  # Redirect after saving
+
+    # Render edit form with current data for GET request
+    return render(request, 'edit.html', {'student': student_to_edit})

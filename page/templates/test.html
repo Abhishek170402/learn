@@ -58,8 +58,7 @@
                     <input type="number" id="mark" name="mark" class="form-control" required>
                 </div>
 
-                        <!-- validation for phn number -->
-
+                <!-- Validation for phone number -->
                 <div class="form-group col-md-3">
                     <label for="phone">Phone Number:</label>
                     <input type="tel" id="phone" name="phone" class="form-control"
@@ -70,7 +69,7 @@
             </div>
             <button type='submit' class='btn btn-primary btn-block'>Add Student</button>
         </form>
-    
+
         <!-- Student List Table -->
         <h2>Student List</h2>
         <table class='table table-striped'>
@@ -81,6 +80,7 @@
                     <th>Class</th>
                     <th>Mark</th>
                     <th>Phone Number</th> <!-- Add Phone Number Column -->
+                    <th>Actions</th> <!-- New Actions Column -->
                 </tr>
             </thead>
             <tbody>
@@ -91,15 +91,16 @@
                     <td>{{ student.class }}</td>
                     <td>{{ student.mark }}</td>
                     <td>{{ student.phone }}</td> <!-- Display Phone Number -->
+                    <!-- Edit Button -->
+                    <td><a href="{% url 'edit_student' student.id %}" class='btn btn-warning btn-sm'>Edit</a></td> 
                 </tr>
                 {% empty %}
-                <tr><td colspan='5' class='text-center'>No students found.</td></tr>
+                <tr><td colspan='6' class='text-center'>No students found.</td></tr> <!-- Adjusted colspan -->
                 {% endfor %}
             </tbody>
         </table>
-    
+
     </div>
-    
 
 <!-- Bootstrap JS and dependencies -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
