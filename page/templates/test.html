@@ -3,109 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Management</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Student Management System</title>
     <style>
         body {
-            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 20px;
+            color: #333;
         }
-        .container {
-            margin-top: 50px;
+        
+        h1, h2 {
+            color: #4a90e2;
         }
-        .table {
-            background-color: #ffffff;
-            border-radius: 8px;
-            overflow: hidden;
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
+
+        form label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #333;
+        }
+
+        form input[type="text"],
+        form input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        form button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        form button:hover {
+            background-color: #357abd;
+        }
+
+        #undo-message {
+            display: none;
+            background-color: #e7f3fe;
+            color: #31708f;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #31708f;
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            font-size: 14px;
+        }
+
         th {
-            background-color: #007bff;
+            background-color: #4a90e2;
             color: white;
         }
-        h1 {
-            color: #343a40;
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        a {
+            color: #4a90e2;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1 class="text-center">Student Management System</h1>
-    
-        {% if error %}
-        <div class="alert alert-danger" role="alert">
-            {{ error }}
-        </div>
-        {% endif %}
-    
-        <form method="POST" action="{% url 'test' %}" class="mb-4">
-            {% csrf_token %}
-            <div class="form-row">
-                <div class="form-group col-md-3">
-                    <label for="student_id">Student ID:</label>
-                    <input type="text" id="student_id" name="student_id" class="form-control" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" name="name" class="form-control" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="student_class">Class:</label>
-                    <input type="text" id="student_class" name="student_class" class="form-control" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="mark">Mark:</label>
-                    <input type="number" id="mark" name="mark" class="form-control" required>
-                </div>
-
-                <!-- Validation for phone number -->
-                <div class="form-group col-md-3">
-                    <label for="phone">Phone Number:</label>
-                    <input type="tel" id="phone" name="phone" class="form-control"
-                           pattern='^\+?1?\d{9,15}$'
-                           placeholder='Enter phone number' required>
-                    <small class='form-text text-muted'>Format: +123456789012 or 1234567890</small>
-                </div>
-            </div>
-            <button type='submit' class='btn btn-primary btn-block'>Add Student</button>
-        </form>
-
-        <!-- Student List Table -->
-        <h2>Student List</h2>
-        <table class='table table-striped'>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Class</th>
-                    <th>Mark</th>
-                    <th>Phone Number</th> <!-- Add Phone Number Column -->
-                    <th>Actions</th> <!-- New Actions Column -->
-                </tr>
-            </thead>
-            <tbody>
-                {% for student in students %}
-                <tr>
-                    <td>{{ student.id }}</td>
-                    <td>{{ student.name }}</td>
-                    <td>{{ student.class }}</td>
-                    <td>{{ student.mark }}</td>
-                    <td>{{ student.phone }}</td> <!-- Display Phone Number -->
-                    <!-- Edit Button -->
-                    <td><a href="{% url 'edit_student' student.id %}" class='btn btn-warning btn-sm'>Edit</a></td> 
-                </tr>
-                {% empty %}
-                <tr><td colspan='6' class='text-center'>No students found.</td></tr> <!-- Adjusted colspan -->
-                {% endfor %}
-            </tbody>
-        </table>
-
+<h1>Student Management System</h1>
+{% if request.session.undo_option %}
+    <div id="undo-message">
+        <p>Changes have been saved. <a href="{% url 'undo_edit' %}">Undo</a></p>
     </div>
+    <script>
+        document.getElementById('undo-message').style.display = 'block';
+        setTimeout(function() {
+            document.getElementById('undo-message').style.display = 'none';
+        }, 10000);
+    </script>
+{% endif %}
 
-<!-- Bootstrap JS and dependencies -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% if error %}
+    <div class="error">{{ error }}</div>
+{% endif %}
+
+<form method="POST" action="{% url 'test' %}">
+    {% csrf_token %}
+    <label for="student_id">Student ID:</label>
+    <input type="text" name="student_id" required>
+
+    <label for="name">Name:</label>
+    <input type="text" name="name" required>
+
+    <label for="student_class">Class:</label>
+    <input type="text" name="student_class" required>
+
+    <label for="mark">Mark:</label>
+    <input type="number" name="mark" required>
+
+    <label for="phone">Phone Number:</label>
+    <input type="text" name="phone" required placeholder="Format: +123456789012">
+
+    <button type="submit">Add Student</button>
+</form>
+
+<h2>Student List</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Class</th>
+            <th>Mark</th>
+            <th>Phone Number</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students %}
+            <tr>
+                <td>{{ student.id }}</td>
+                <td>{{ student.name }}</td>
+                <td>{{ student.class }}</td>
+                <td>{{ student.mark }}</td>
+                <td>{{ student.phone }}</td>
+                <td><a href="{% url 'edit_student' student.id %}">Edit</a></td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="6">No students found.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 </body>
 </html>

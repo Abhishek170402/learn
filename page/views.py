@@ -11,6 +11,9 @@ from django.utils import timezone
 import json
 import os
 import re  # Import regex module
+from rest_framework import status
+from rest_framework.views import APIView
+from .serializers import StudentSerializer
 
 
 
@@ -129,9 +132,11 @@ def save_students(students):
         json.dump(students, file, indent=4)
 
 def index(request):
-    students = load_students()
+    # if 'undo_option' in request.session:
+    #     del request.session['undo_option']  # Clear after displaying once
+    
+    students = load_students()  # Load students from JSON file or database
     return render(request, 'test.html', {'students': students})
-
 def test(request):
     students = load_students()
     
@@ -176,6 +181,14 @@ def edit_student(request, student_id):
     student_to_edit = next((student for student in students if student['id'] == student_id), None)
 
     if request.method == 'POST':
+        # Store current state in session for undo functionality
+        request.session['undo_data'] = student_to_edit.copy()  # Save current state
+        request.session['undo_option'] = True  # Set undo option flag
+        print('undo_data')
+        print(request.session['undo_data'])
+        print('undo_option')
+        print(request.session['undo_option'])
+
         # Retrieve updated data from the form
         name = request.POST.get('name')
         student_class = request.POST.get('student_class')
@@ -198,8 +211,8 @@ def edit_student(request, student_id):
                 'phone': phone
             })
             save_students(students)  # Save updated students list to JSON
-            
-            # Update details in the database (if you have a model for it)
+
+            # Update details in the database
             try:
                 details_obj = details.objects.get(student_id=student_id)
                 details_obj.name = name
@@ -217,3 +230,93 @@ def edit_student(request, student_id):
 
     # Render edit form with current data for GET request
     return render(request, 'edit.html', {'student': student_to_edit})
+
+
+def undo_edit(request):
+    """Undo the last edit made to a student's details."""
+    if 'undo_data' in request.session and request.session.get('undo_option'):
+        previous_data = request.session['undo_data']
+
+        # Load current students and find the one to restore
+        students = load_students()
+        student_to_restore = next((student for student in students if student['id'] == previous_data['id']), None)
+
+        if student_to_restore:
+            # Restore previous data
+            student_to_restore.update(previous_data)
+            save_students(students)  # Save restored students list to JSON
+
+            # Optionally, update the database as well
+            try:
+                details_obj = details.objects.get(student_id=previous_data['id'])
+                details_obj.name = previous_data['name']
+                details_obj.student_class = previous_data['class']
+                details_obj.mark = previous_data['mark']
+                details_obj.phone = previous_data['phone']
+                details_obj.save()
+            except details.DoesNotExist:
+                pass  # Handle error or log it
+
+            del request.session['undo_data']  # Clear undo data after restoring
+            del request.session['undo_option']  # Clear undo option flag
+
+    return redirect('index')  # Redirect after undoing
+
+
+#using api for student management
+
+
+class StudentListCreate(APIView):
+    """
+    List all students or create a new student.
+    """
+    
+    def get(self, request):
+        students = Student.objects.all()
+        serializer = StudentSerializer(students, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+    def post(self, request):
+        serializer = StudentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class StudentDetail(APIView):
+    """
+    Retrieve, update or delete a student instance.
+    """
+    
+    def get_object(self, pk):
+        try:
+            return Student.objects.get(pk=pk)
+        except Student.DoesNotExist:
+            return None
+
+    def get(self, request, pk):
+        student = self.get_object(pk)
+        if student is None:
+            return JsonResponse({'error': 'Student not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = StudentSerializer(student)
+        return JsonResponse(serializer.data)
+
+    def put(self, request, pk):
+        student = self.get_object(pk)
+        if student is None:
+            return JsonResponse({'error': 'Student not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = StudentSerializer(student, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        student = self.get_object(pk)
+        if student is None:
+            return JsonResponse({'error': 'Student not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        student.delete()
+        return JsonResponse({'message': 'Student deleted successfully'}, status=status.HTTP_204_NO_CONTENT)

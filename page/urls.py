@@ -17,4 +17,24 @@ urlpatterns = [
     path("save_students/", views.save_students, name="save_students"),
     path("test/", views.test, name="test"),
     path('edit/<str:student_id>/',views.edit_student, name='edit_student'),
+    path("undo_edit/", views.undo_edit, name="undo_edit"),
+    
+    
+     # New API endpoints for student management
+    path('api/v1/students/', views.StudentListCreate.as_view(), name='student-list-create'),
+    path('api/v1/students/<int:pk>/', views.StudentDetail.as_view(), name='student-detail'),
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 ]

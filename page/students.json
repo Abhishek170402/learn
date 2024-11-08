@@ -2,8 +2,8 @@
     {
         "id": "1",
         "name": "Abhishek R",
-        "class": "bca ",
-        "mark": "50",
+        "class": "bca",
+        "mark": "70",
         "phone": "9876543218"
     },
     {
@@ -17,37 +17,43 @@
         "id": "3",
         "name": "anu",
         "class": "bca",
-        "mark": "40"
+        "mark": "40",
+        "phone": "9876543214"
     },
     {
         "id": "4",
         "name": "anand",
         "class": "bca",
-        "mark": "40"
+        "mark": "40",
+        "phone": "98765432104"
     },
     {
         "id": "5",
         "name": "arun",
         "class": "bca",
-        "mark": "40"
+        "mark": "40",
+        "phone": "9876543210"
     },
     {
         "id": "6",
         "name": "amal",
         "class": "bca",
-        "mark": "35"
+        "mark": "30",
+        "phone": "08765432197"
     },
     {
         "id": "7",
         "name": "ameen ",
         "class": "bca",
-        "mark": "35"
+        "mark": "30",
+        "phone": "0987654321"
     },
     {
         "id": "8",
         "name": "ashik",
         "class": "bca",
-        "mark": "50"
+        "mark": "50",
+        "phone": "0987654321"
     },
     {
         "id": "9",
@@ -55,5 +61,12 @@
         "class": "bca",
         "mark": "40",
         "phone": "9876543210"
+    },
+    {
+        "id": "dd",
+        "name": "dhd",
+        "class": "bca",
+        "mark": "50",
+        "phone": "98765432104"
     }
 ]
