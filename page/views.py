@@ -259,6 +259,8 @@ def undo_edit(request):
 
             del request.session['undo_data']  # Clear undo data after restoring
             del request.session['undo_option']  # Clear undo option flag
+            
+            
 
     return redirect('index')  # Redirect after undoing
 
@@ -270,13 +272,20 @@ class StudentListCreate(APIView):
     """
     List all students or create a new student.
     """
-    
+    # Define a method to handle GET requests to retrieve a list of all students
     def get(self, request):
-        students = Student.objects.all()
-        serializer = StudentSerializer(students, many=True)
+        students = Student.objects.all()   # Retrieve all student instances from the database
+        serializer = StudentSerializer(students, many=True)  # Create a serializer to convert the student instances to JSON data
         return JsonResponse(serializer.data, safe=False)
+    
+    
+     # Define a method to handle POST requests to create a new student
 
     def post(self, request):
+        students = Student.objects.all()   # Retrieve all student instances from the database
+        serializer = StudentSerializer(students, many=True)  # Create a serializer to convert the student instances to JSON data
+        return JsonResponse(serializer.data, safe=False)
+        # return Response(status=200)
         serializer = StudentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
